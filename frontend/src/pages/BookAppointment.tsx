@@ -60,6 +60,34 @@ const BookAppointment = () => {
     return bookedSlots.some((b) => b.timeSlot === slot);
   };
 
+  const isSlotInPast = (slot: string) => {
+    if (!selectedDate) return false;
+    const todayStr = format(new Date(), "yyyy-MM-dd");
+    const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+    if (selectedDateStr !== todayStr) return false;
+
+    const match = slot.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+    if (!match) return false;
+
+    let [_, hoursStr, minutesStr, period] = match;
+    let hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+
+    if (period.toUpperCase() === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (period.toUpperCase() === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    const now = new Date();
+    const currentHours = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    if (hours < currentHours) return true;
+    if (hours === currentHours && minutes <= currentMinutes) return true;
+    return false;
+  };
+
   const handleSubmit = async () => {
     if (!selectedDate || !selectedSlot) return;
 
@@ -254,17 +282,19 @@ const BookAppointment = () => {
               <div className="time-slots-grid">
                 {TIME_SLOTS.map((slot) => {
                   const booked = isSlotBooked(slot);
+                  const inPast = isSlotInPast(slot);
                   const isSelected = selectedSlot === slot;
 
                   return (
                     <button
                       key={slot}
-                      disabled={booked}
+                      disabled={booked || inPast}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`time-slot ${booked ? "booked" : ""} ${isSelected ? "selected" : ""}`}
+                      className={`time-slot ${booked ? "booked" : ""} ${inPast ? "past disabled" : ""} ${isSelected ? "selected" : ""}`}
                     >
                       <span className="slot-time">{slot}</span>
                       {booked && <span className="slot-status">Pending</span>}
+                      {inPast && <span className="slot-status">Passed</span>}
                     </button>
                   );
                 })}
