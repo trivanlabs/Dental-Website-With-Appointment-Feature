@@ -19,6 +19,8 @@ export interface AdminUser {
 const TOKEN_KEY = 'shiv-shakti-auth-token';
 const ADMIN_KEY = 'shiv-shakti-admin';
 
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -55,7 +57,7 @@ function authHeaders(): Record<string, string> {
 // ─── Auth API ────────────────────────────────────────────────────────
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
-  const res = await fetch('/api/auth/login', {
+  const res = await fetch(`${BASE_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -70,7 +72,7 @@ export async function login(email: string, password: string): Promise<LoginRespo
 }
 
 export async function verifyToken(): Promise<AdminUser> {
-  const res = await fetch('/api/auth/me', {
+  const res = await fetch(`${BASE_URL}/api/auth/me`, {
     headers: authHeaders(),
   });
   if (!res.ok) {
@@ -81,7 +83,7 @@ export async function verifyToken(): Promise<AdminUser> {
 }
 
 export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
-  const res = await fetch('/api/auth/change-password', {
+  const res = await fetch(`${BASE_URL}/api/auth/change-password`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ currentPassword, newPassword }),
@@ -133,7 +135,7 @@ export async function createAppointment(data: {
   timeSlot: string;
   concern: string;
 }): Promise<Appointment> {
-  const res = await fetch('/api/appointments', {
+  const res = await fetch(`${BASE_URL}/api/appointments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -146,7 +148,7 @@ export async function createAppointment(data: {
 }
 
 export async function getBookedSlots(date: string): Promise<BookedSlot[]> {
-  const res = await fetch(`/api/appointments/slots/${date}`);
+  const res = await fetch(`${BASE_URL}/api/appointments/slots/${date}`);
   if (!res.ok) throw new Error('Failed to fetch slots');
   return res.json();
 }
@@ -163,7 +165,7 @@ export async function getAppointments(params?: {
   if (params?.search) query.set('search', params.search);
   if (params?.date) query.set('date', params.date);
 
-  const res = await fetch(`/api/dashboard/appointments?${query.toString()}`, {
+  const res = await fetch(`${BASE_URL}/api/dashboard/appointments?${query.toString()}`, {
     headers: authHeaders(),
   });
   if (res.status === 401) {
@@ -176,7 +178,7 @@ export async function getAppointments(params?: {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const res = await fetch('/api/dashboard/stats', {
+  const res = await fetch(`${BASE_URL}/api/dashboard/stats`, {
     headers: authHeaders(),
   });
   if (res.status === 401) {
@@ -192,7 +194,7 @@ export async function updateAppointmentStatus(
   id: string,
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
 ): Promise<Appointment> {
-  const res = await fetch(`/api/dashboard/appointments/${id}/status`, {
+  const res = await fetch(`${BASE_URL}/api/dashboard/appointments/${id}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ status }),
@@ -210,7 +212,7 @@ export async function updateDoctorNotes(
   id: string,
   doctorNotes: string
 ): Promise<Appointment> {
-  const res = await fetch(`/api/dashboard/appointments/${id}/notes`, {
+  const res = await fetch(`${BASE_URL}/api/dashboard/appointments/${id}/notes`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ doctorNotes }),
@@ -236,5 +238,5 @@ export function getExportUrl(params?: {
   // For protected export, we pass token as query param
   const token = getToken();
   if (token) query.set('token', token);
-  return `/api/dashboard/export?${query.toString()}`;
+  return `${BASE_URL}/api/dashboard/export?${query.toString()}`;
 }

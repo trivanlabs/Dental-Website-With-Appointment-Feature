@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://dental-website-with-appointment-feature.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!api).*)" ,
+      "destination": "/index.html"
+    }
+  ]
+}

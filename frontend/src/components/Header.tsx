@@ -108,7 +108,7 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-xl font-extrabold text-foreground leading-tight">
-                Shiv Shakti
+                Clinic 
               </h1>
               <p className="text-base font-bold text-muted-foreground">Dental Clinic</p>
             </div>
