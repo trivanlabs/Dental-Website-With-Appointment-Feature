@@ -811,7 +811,7 @@
 /* ─── Sidebar ─────────────────────────────────────────────── */
 .db-sidebar {
   width: 240px;
-  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 40%, #2563eb 100%);
+  background: linear-gradient(180deg, #122c38 0%, #1a3a4a 40%, #2d5a6b 100%);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -926,7 +926,7 @@
   border: none;
   border-radius: 8px;
   background: #fff;
-  color: #1e40af;
+  color: #1a3a4a;
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
@@ -934,7 +934,7 @@
 }
 
 .db-sidebar-cta-btn:hover {
-  background: #dbeafe;
+  background: #e0f2f1;
   transform: translateY(-1px);
 }
 
